@@ -64,4 +64,46 @@ INSERT INTO `agency_hotel_options` (`id`,`hotel_id`,`agency_id`,`percent`,`is_bl
 (19,9,2,10,1,0,0),
 (20,10,2,14,1,0,0);
 
+-- Правило 1: Проверка страны
+INSERT INTO rules (name, client_id, manager_text, is_active)
+VALUES ('Правило проверки страны 1', 1, 'Текст для менеджера 1', 1);
+
+INSERT INTO rule_conditions (rule_id, condition_type, comparison_operator, value)
+VALUES (LAST_INSERT_ID(), 'country', 'equal', '1'); -- Страна: Россия
+
+-- Правило 2: Проверка страны
+INSERT INTO rules (name, client_id, manager_text, is_active)
+VALUES ('Правило проверки страны 2', 1, 'Текст для менеджера 2', 1);
+
+INSERT INTO rule_conditions (rule_id, condition_type, comparison_operator, value)
+VALUES (LAST_INSERT_ID(), 'country', 'not_equal', '1'); -- Страна: не Россия
+
+-- Правило 3: Проверка города
+INSERT INTO rules (name, client_id, manager_text, is_active)
+VALUES ('Правило проверки города 1', 1, 'Текст для менеджера 3', 1);
+
+INSERT INTO rule_conditions (rule_id, condition_type, comparison_operator, value)
+VALUES (LAST_INSERT_ID(), 'city', 'equal', '1'); -- Город: Москва
+
+-- Правило 4: Проверка города
+INSERT INTO rules (name, client_id, manager_text, is_active)
+VALUES ('Правило проверки города 2', 1, 'Текст для менеджера 4', 1);
+
+INSERT INTO rule_conditions (rule_id, condition_type, comparison_operator, value)
+VALUES (LAST_INSERT_ID(), 'city', 'not_equal', '1'); -- Город: не Москва
+
+-- Правило 5: Проверка звездности отеля
+INSERT INTO rules (name, client_id, manager_text, is_active)
+VALUES ('Правило проверки звездности отеля 1', 1, 'Текст для менеджера 5', 1);
+
+INSERT INTO rule_conditions (rule_id, condition_type, comparison_operator, value)
+VALUES (LAST_INSERT_ID(), 'stars', 'greater_than', '3'); -- Звездность больше 3
+
+-- Правило 6: Проверка звездности отеля
+INSERT INTO rules (name, client_id, manager_text, is_active)
+VALUES ('Правило проверки звездности отеля 2', 1, 'Текст для менеджера 6', 1);
+
+INSERT INTO rule_conditions (rule_id, condition_type, comparison_operator, value)
+VALUES (LAST_INSERT_ID(), 'stars', 'less_than', '4');
+
 

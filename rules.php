@@ -82,38 +82,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     let condition = 0;
     // Динамичное добавление поля с условиями
     function addCondition() {
+
         var div = document.createElement('div');
         div.innerHTML = '<label for="condition_type">Condition Type:</label><br>\
-                            <select id="condition_type" name="conditions['+condition+'][condition_type]" onchange="handleValueType(this, '+condition+')" required>\
+                            <select name="conditions['+condition+'][condition_type]" onchange="handleValueType(this, '+condition+')" required>\
+                                <option selected disabled>Выберите тип</option>\
                                 <?php foreach ($types as $key => $type): ?>\
-                                    <option data-type="<?= $type ?>" value="<?= $key ?>"><?= $key ?></option>\
+                                    <option data-type="<?= $type['type'] ?>" data-operators="<?= htmlspecialchars(json_encode($type['operators'])) ?>" value="<?= $key ?>"><?= $key ?></option>\
                                 <?php endforeach; ?>\
-                            </select><br><br>\
-                            <label for="comparison_operator">Comparison Operator:</label><br>\
-                            <select name="conditions['+condition+'][comparison_operator]" required><?php foreach ($operators as $op): ?>\
-                                <option value="<?= $op ?>"><?= $op ?></option><?php endforeach; ?></select><br><br>\
-                            <label for="value">Value:</label><br>\
-                            <input type="number" name="conditions['+condition+'][value]" required><br><br>';
+                            </select><br><div id="'+condition+'"></div><br><br>';
         document.getElementById('conditions').appendChild(div);
         condition++;
     }
 
-    // Обработка выбора типа Condition Type для проверки типа значения Value
     function handleValueType(select, condition) {
-        var parentDiv = select.parentElement;
-        var valueTypeInput = parentDiv.querySelector("input[name='conditions[" + condition + "][value]'], select[name='conditions[" + condition + "][value]']");
+        var inputBlock = document.getElementById(condition);
         var selectedType = select.options[select.selectedIndex].dataset.type;
+        var selectedOperators = JSON.parse(select.options[select.selectedIndex].dataset.operators);
+        var operatorHtml = "";
+        var valueHtml = "";
+
+        for (var i = 0; i < selectedOperators.length; i++) {
+            operatorHtml += '<option value="' + selectedOperators[i] + '">' + selectedOperators[i] + '</option>';
+        }
 
         if (selectedType === "integer") {
-            valueTypeInput.outerHTML = '<input type="number" name="conditions[' + condition + '][value]" required>';
+            valueHtml = '<input type="number" name="conditions[' + condition + '][value]" required><br><br>';
         } else if (selectedType === "boolean") {
-            valueTypeInput.outerHTML = '<select name="conditions[' + condition + '][value]" required> \
-                                        <option value="0">False</option> \
-                                        <option value="1">True</option> \
-                                    </select>';
+            valueHtml = '<select name="conditions[' + condition + '][value]" required>' +
+                '<option value="0">False</option>' +
+                '<option value="1">True</option>' +
+                '</select><br><br>';
         }
-    }
 
+        inputBlock.innerHTML = '<label for="comparison_operator">Comparison Operator:</label><br>' +
+            '<select name="conditions[' + condition + '][comparison_operator]" required>' + operatorHtml + '</select><br><br>' +
+            '<label for="value">Value:</label><br>' + valueHtml;
+    }
 </script>
 </body>
 </html>

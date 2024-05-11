@@ -5,16 +5,69 @@ class ConditionRepository
 {
     protected PDO $db;
     protected array $validConditionTypes = [
-        'country' => 'integer',
-        'city' => 'integer',
-        'stars' => 'integer',
-        'commission' => 'integer',
-        'is_default' => 'boolean',
-        'company' => 'integer',
-        'blacklist' => 'boolean',
-        'recommendation' => 'boolean',
-        'whitelist' => 'boolean',
+        'country' => [
+            'type' => 'integer',
+            'operators' => [
+                'equal',
+                'not_equal'
+            ]
+        ],
+        'city' => [
+            'type' => 'integer',
+            'operators' => [
+                'equal',
+                'not_equal'
+            ]
+        ],
+        'stars' => [
+            'type' => 'integer',
+            'operators' => [
+                'equal',
+                'not_equal'
+            ]
+        ],
+        'commission' => [
+            'type' => 'integer',
+            'operators' => [
+                'equal',
+                'not_equal',
+                'greater_than',
+                'less_than'
+            ]
+        ],
+        'is_default' => [
+            'type' => 'boolean',
+            'operators' => [
+                'equal',
+            ]
+        ],
+        'company' => [
+            'type' => 'integer',
+            'operators' => [
+                'equal',
+                'not_equal'
+            ]
+        ],
+        'blacklist' => [
+            'type' => 'boolean',
+            'operators' => [
+                'equal',
+            ],
+        ],
+        'recommendation' => [
+            'type' => 'boolean',
+            'operators' => [
+                'equal',
+            ],
+        ],
+        'whitelist' => [
+            'type' => 'boolean',
+            'operators' => [
+                'equal',
+            ],
+        ],
     ];
+
     protected array $validComparisonOperators = ['equal', 'not_equal', 'greater_than', 'less_than'];
 
     public function __construct(PDO $db)
@@ -43,11 +96,15 @@ class ConditionRepository
             throw new InvalidArgumentException("Не верный оператор: $comparisonOperator");
         }
 
-        // Проверка типа значения
         $expectedType = $this->validConditionTypes[$conditionType];
-        if ($expectedType === 'integer' && !is_int($value)) {
+        if (!in_array($comparisonOperator, $expectedType['operators'])) {
+            throw new InvalidArgumentException("Не верный оператор для данного типа");
+        }
+
+        // Проверка типа значения
+        if ($expectedType['type'] === 'integer' && !is_int($value)) {
             $value = (int) $value;
-        } elseif ($expectedType === 'boolean') {
+        } elseif ($expectedType['type'] === 'boolean') {
             $value = (bool) $value;
         }
 

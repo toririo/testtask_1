@@ -25,7 +25,7 @@ class RuleRepository
         SQL;
         $statement = $this->db->prepare($query);
         $statement->execute(['ruleId' => $ruleId]);
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
     public function addRule($name, $clientId, $managerText, $isActive): bool|string
