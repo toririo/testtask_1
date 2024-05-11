@@ -6,11 +6,18 @@ define('MYSQL_DB', $_ENV['MYSQL_DATABASE']);
 
 $conn = new PDO('mysql:host='.MYSQL_HOST.';port=3306;dbname='.MYSQL_DB, MYSQL_USER, MYSQL_PASSWORD);
 
-$hotel_id = $_GET['hotel_id'] ?? 1; // отель для которого делаем проверку
 
-echo '<ul>';
-foreach ($conn->query('SELECT * FROM `agencies`') as $row) {
-    echo '<li><strong>'.$row['id'].'</strong> '.$row['name'].'</li>';
-}
-echo '</ul>';
-?>
+require_once 'RuleManager.php';
+require_once 'Repository/RuleRepository.php';
+require_once 'Repository/ConditionRepository.php';
+require_once 'Repository/HotelRepository.php';
+require_once 'Repository/AgentRepository.php';
+
+// Создаем экземпляр класса RuleManager
+$ruleManager = new RuleManager(new RuleRepository($conn), new ConditionRepository($conn), new HotelRepository($conn), new AgentRepository($conn));
+
+// Получаем идентификатор отеля из GET-параметров
+$hotel_id = $_GET['hotel_id'] ?? 1;
+
+// Проверяем правила для отеля
+$ruleManager->checkHotelRules($hotel_id);
